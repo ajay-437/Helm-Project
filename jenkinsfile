@@ -39,20 +39,20 @@ pipeline{
         stage('Deploy with Helm') {
             steps {
                 script {
-                    // Access the Helm chart repository (replace with the actual location)
+                    // Access the Helm chart repository 
                     git checkout 'https://ajay-437@github.com/Helm-Project/helm-project.git'
 
-                    // Optional: Update image tag in values.yaml (adjust the sed command as needed)
-                    sh "sed -i 's/image\.tag:.*/image\.tag: ${newVersion}/' testchert/values.yaml"
+                    // Optional: Update image tag in values.yaml 
+                    sh "sed -i 's/image\.tag:.*/image\.tag: ${newVersion}/' helm-project/values.yaml"
 
                     // Connect to EKS cluster (replace with your cluster configuration)
-                    sh 'aws eks update-kubeconfig --region ca-central-1 --name ed-eks-01'  // Update region and cluster name
+                    sh 'aws eks update-kubeconfig --region ca-central-1 --name ed-eks-01'  
 
                     // Install Helm if missing
                     sh 'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/v3.9.3/scripts/get-helm.sh && bash get_helm.sh'
 
                     // Deploy with Helm (using the new image tag)
-                    sh "helm upgrade --install myrelease2 ./testchert -n myns --set image.repository=ajay437/test --set image.tag=${newVersion}"
+                    sh "helm upgrade --install myrelease ./helm-project -n ingress-nginx --set image.repository=ajay437/test --set image.tag=${newVersion}"
                 }
             }
         }
