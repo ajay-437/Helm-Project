@@ -1,0 +1,61 @@
+pipeline{
+    agent any
+    environment{
+    DOCKERHUB_CRENTIALS=credentials('docker-cred')
+    }    
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Login to Docker Hub
+                    sh "echo $DOCKERHUB_CRENTIALS_PSW | docker login -u $DOCKERHUB_CRENTIALS_USR --password-stdin"
+
+                    // Build the image
+                    sh "docker build -t ajay437/test:latest ."
+
+                    // Get the latest version (optional)
+                    def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
+
+                    def newVersion = ""
+                    if (currentVersion == "") {
+                        newVersion = "0.1"
+                    } else {
+                        def versionParts = currentVersion.split('.')
+                        def major = versionParts[0].toInteger()
+                        def minor = versionParts[1].toInteger()
+                        newVersion = "${major}.${minor + 1}"
+                    }
+
+                    // Tag the image with the new version
+                    sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
+                    echo "New version tagged: ajay437/test:${newVersion}"
+
+                    // Push the image to Docker Hub
+                    sh "docker push ajay437/test:latest"
+                    sh "docker push ajay437/test:${newVersion}"
+                }
+            }
+        }
+        stage('Deploy with Helm') {
+            steps {
+                script {
+                    // Access the Helm chart repository (replace with the actual location)
+                    git checkout 'https://ajay-437@github.com/Helm-Project/helm-project.git'
+
+                    // Optional: Update image tag in values.yaml (adjust the sed command as needed)
+                    sh "sed -i 's/image\.tag:.*/image\.tag: ${newVersion}/' testchert/values.yaml"
+
+                    // Connect to EKS cluster (replace with your cluster configuration)
+                    sh 'aws eks update-kubeconfig --region ca-central-1 --name ed-eks-01'  // Update region and cluster name
+
+                    // Install Helm if missing
+                    sh 'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/v3.9.3/scripts/get-helm.sh && bash get_helm.sh'
+
+                    // Deploy with Helm (using the new image tag)
+                    sh "helm upgrade --install myrelease2 ./testchert -n myns --set image.repository=ajay437/test --set image.tag=${newVersion}"
+                }
+            }
+        }
+    }
+        
+}
