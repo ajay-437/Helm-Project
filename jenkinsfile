@@ -20,16 +20,16 @@ pipeline{
                     if (currentVersion == "" || !currentVersion.contains('.')) {
                         newVersion = "0.1"
                     } else {
-                        def versionParts = currentVersion.split('.')
+                        def versionParts = currentVersion.split('\\.')
                         if (versionParts.length < 2) {
-                        println("Invalid version format: " + currentVersion)
+                            println("Invalid version format: " + currentVersion)
                         } else {
                             def major = versionParts[0].toInteger()
                             def minor = versionParts[1].toInteger()
-                            MINOR=$((MINOR + 1))
-                            newVersion = "${major}.${minor}"
+                            newVersion = "${major}.${minor + 1}"
                         }
                     }
+
                     // Tag the image with the new version
                     sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
                     echo "New version tagged: ajay437/test:${newVersion}"
