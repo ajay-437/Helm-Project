@@ -40,7 +40,7 @@ pipeline{
             steps {
                 script {
                     // Access the Helm chart repository 
-                    git checkout 'https://ajay-437@github.com/Helm-Project/helm-project.git'
+                    git 'https://ajay-437@github.com/Helm-Project/helm-project.git'
 
                     // Optional: Update image tag in values.yaml 
                    sh """sed -i 's/image\\.tag:.*/image\\.tag: ${newVersion}/' helm-project/values.yaml"""
