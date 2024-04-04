@@ -2,7 +2,8 @@ pipeline{
     agent any
     environment{
     DOCKERHUB_CREDENTIALS=credentials('docker-cred')
-    }    
+    }   
+    def newVersion = ""
     stages {
         stage('Build Docker Image') {
             steps {
