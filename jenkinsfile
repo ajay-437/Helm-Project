@@ -43,12 +43,16 @@ pipeline{
         stage('Deploy with Helm') {
             steps {
                 script {
-                    // Access the Helm chart repository 
+                    // Use credentials for GitHub access
                     credentialsId 'my-github-credential'
-                    git fetch --tags --force --progress https://github.com/Helm-Project/helm-project.git +refs/heads/*:refs/remotes/origin/*
 
+                    git 'https://github.com/Helm-Project/helm-project.git'
+
+                    // Fetch latest changes for potential updates
+                    git fetch --tags --force --progress +refs/heads/*:refs/remotes/origin/*
+                            
                     // Optional: Update image tag in values.yaml 
-                   sh """sed -i 's/image\\.tag:.*/image\\.tag: ${newVersion}/' helm-project/values.yaml"""
+                    sh """sed -i 's/image\\.tag:.*/image\\.tag: ${newVersion}/' helm-project/values.yaml"""
 
                     // Connect to EKS cluster (replace with your cluster configuration)
                     sh 'aws eks --region ca-central-1 update-kubeconfig  --name ed-eks-01'  
