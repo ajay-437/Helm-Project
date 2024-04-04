@@ -44,7 +44,8 @@ pipeline{
             steps {
                 script {
                     // Access the Helm chart repository 
-                    git credentialsId: 'GIT_TOKEN', url: 'https://github.com/Helm-Project/helm-project.git'
+                    credentialsId 'GIT_TOKEN'
+                    git fetch --tags --force --progress https://ajay-437@github.com/Helm-Project/helm-project.git +refs/heads/*:refs/remotes/origin/*
 
                     // Optional: Update image tag in values.yaml 
                    sh """sed -i 's/image\\.tag:.*/image\\.tag: ${newVersion}/' helm-project/values.yaml"""
