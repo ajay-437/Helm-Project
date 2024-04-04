@@ -43,7 +43,7 @@ pipeline{
                     git checkout 'https://ajay-437@github.com/Helm-Project/helm-project.git'
 
                     // Optional: Update image tag in values.yaml 
-                    sh "sed -i 's/image\.tag:.*/image\.tag: \\${newVersion}/' helm-project/values.yaml"
+                    sh '''sed -i 's/image\.tag:.*/image\.tag: '${newVersion}'/' helm-project/values.yaml'''
 
                     // Connect to EKS cluster (replace with your cluster configuration)
                     sh 'aws eks update-kubeconfig --region ca-central-1 --name ed-eks-01'  
