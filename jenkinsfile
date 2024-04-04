@@ -1,20 +1,20 @@
 pipeline{
     agent any
     environment{
-    DOCKERHUB_CRENTIALS=credentials('docker-cred')
+    DOCKERHUB_CREDENTIALS=credentials('docker-cred')
     }    
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
                     // Login to Docker Hub
-                    sh "echo $DOCKERHUB_CRENTIALS_PSW | docker login -u $DOCKERHUB_CRENTIALS_USR --password-stdin"
+                    sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
 
                     // Build the image
                     sh "docker build -t ajay437/test:latest ."
 
                     // Get the latest version (optional)
-                    def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
+                    def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
 
                     def newVersion = ""
                     if (currentVersion == "") {
