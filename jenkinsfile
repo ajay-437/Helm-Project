@@ -51,7 +51,7 @@ pipeline{
                     // Install Helm if missing
                     sh 'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/v3.9.3/scripts/get-helm.sh && bash get_helm.sh'
 
-                    // Deploy with Helm (using the new image tag)
+                    // Deploy with Helm 
                     sh "helm upgrade --install myrelease ./helm-project -n ingress-nginx --set image.repository=ajay437/test --set image.tag=${newVersion}"
                 }
             }
