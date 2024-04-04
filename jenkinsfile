@@ -24,7 +24,6 @@ pipeline{
                         if (versionParts.length < 2) {
                         println("Invalid version format: " + currentVersion)
                         } else {
-                            def versionParts = currentVersion.split('.')
                             def major = versionParts[0].toInteger()
                             def minor = versionParts[1].toInteger()
                             newVersion = "${major}.${minor + 1}"
