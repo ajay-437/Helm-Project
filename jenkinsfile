@@ -44,13 +44,13 @@ pipeline{
             steps {
                 script {
                     // Access the Helm chart repository 
-                    git 'https://ajay-437@github.com/Helm-Project/helm-project.git'
+                    git credentialsId: 'GIT_TOKEN', url: 'https://github.com/Helm-Project/helm-project.git'
 
                     // Optional: Update image tag in values.yaml 
                    sh """sed -i 's/image\\.tag:.*/image\\.tag: ${newVersion}/' helm-project/values.yaml"""
 
                     // Connect to EKS cluster (replace with your cluster configuration)
-                    sh 'aws eks update-kubeconfig --region ca-central-1 --name ed-eks-01'  
+                    sh 'aws eks --region ca-central-1 update-kubeconfig  --name ed-eks-01'  
 
                     // Install Helm if missing
                     sh 'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/v3.9.3/scripts/get-helm.sh && bash get_helm.sh'
