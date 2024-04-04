@@ -26,7 +26,8 @@ pipeline{
                         } else {
                             def major = versionParts[0].toInteger()
                             def minor = versionParts[1].toInteger()
-                            newVersion = "${major}.${minor + 1}"
+                            MINOR=$((MINOR + 1))
+                            newVersion = "${major}.${minor}"
                         }
                     }
                     // Tag the image with the new version
