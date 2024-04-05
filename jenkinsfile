@@ -52,7 +52,8 @@ pipeline{
                     withCredentials([string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {
                     // Now you can use the credentials in your AWS CLI commands like:
                     sh 'aws eks --region ca-central-1 update-kubeconfig --name ed-eks-01'  
-
+                    }
+                }
                     // Deploy with Helm 
                     sh "helm upgrade --install myrelease ./helm-project"
                 }
