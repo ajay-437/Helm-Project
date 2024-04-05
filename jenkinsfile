@@ -53,10 +53,10 @@ pipeline{
                             // Now you can use the credentials in your AWS CLI commands like:
                             sh 'aws eks --region ca-central-1 update-kubeconfig --name ed-eks-01'  
                     
-                            withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
+                            //withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
                             // Deploy with Helm 
-                            sh "sudo -S -u $USERNAME helm upgrade --install myrelease /home/ubuntu/helm-project <PASSWORD>"
-                            } 
+                            sh "helm upgrade --install myrelease /home/ubuntu/helm-project"
+                            
                         }               
                     }
                 }
