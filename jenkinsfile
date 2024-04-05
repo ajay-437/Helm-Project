@@ -51,8 +51,8 @@ pipeline{
                     
 
                     // Connect to EKS cluster (replace with your cluster configuration)
-                    sh 'aws eks --region ca-central-1 update-kubeconfig  --name ed-eks-01'  
-                    sh 'aws configure'
+                    sh '/usr/local/bin/aws eks --region ca-central-1 update-kubeconfig  --name ed-eks-01'  
+                   
 
                     // Deploy with Helm 
                     sh "helm upgrade --install myrelease ./helm-project"
