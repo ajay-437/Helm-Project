@@ -5,23 +5,17 @@ pipeline{
     }   
     def newVersion = ""
     stages {
-        stage('Login to Docker Hub') {
+        stage('Build Docker Image') {
             steps {
-                    
+                script {
+                    // Login to Docker Hub
                     sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                  }
-            }
 
-    stage('Build the image') {
-            steps {
-                    
+                    // Build the image
                     sh "docker build -t ajay437/test:latest ."
 
-                  }
-            }
-    stage('Get the latest version') {
-            steps {
-                   def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
+                    // Get the latest version (optional)
+                    def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
 
                     def newVersion = ""
                     if (currentVersion == "" || !currentVersion.contains('.')) {
@@ -37,27 +31,17 @@ pipeline{
                         }
                     }
 
-                  }
-                          
-    stage('Tag the image with the new version') {
-            steps {
+                    // Tag the image with the new version
                     sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
                     echo "New version tagged: ajay437/test:${newVersion}"
 
-                  }
-            }                
-
-    stage('Push the image to Docker Hub') {
-            steps {
-                     sh "docker push ajay437/test:latest"
+                    // Push the image to Docker Hub
+                    sh "docker push ajay437/test:latest"
                     sh "docker push ajay437/test:${newVersion}"
-
-                  }
-            }                        
-
                 }
             }
-    stage('Deploy with Helm') {
+        }
+        stage('Deploy with Helm') {
             steps {
                 script {
                     // Use credentials for GitHub access
@@ -65,14 +49,10 @@ pipeline{
 
                     git 'https://github.com/Helm-Project/helm-project.git'
 
-                    // Fetch latest changes for potential updates
-                    git fetch --tags --force --progress +refs/heads/*:refs/remotes/origin/*
+                    
 
                     // Connect to EKS cluster (replace with your cluster configuration)
                     sh 'aws eks --region ca-central-1 update-kubeconfig  --name ed-eks-01'  
-
-                    // Install Helm if missing
-                    sh 'curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/v3.9.3/scripts/get-helm.sh && bash get_helm.sh'
 
                     // Deploy with Helm 
                     sh "helm upgrade --install myrelease ./helm-project -n ingress-nginx --set image.repository=ajay437/test --set image.tag=${newVersion}"
@@ -80,6 +60,8 @@ pipeline{
             }
         }
     }      
+
+
 post{
     always{
     sh 'docker logout'
