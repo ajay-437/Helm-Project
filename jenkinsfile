@@ -45,18 +45,17 @@ pipeline{
                 script {
                     // Use credentials for GitHub access
                     //credentialsId 'my-github-credential'
-
                    //git 'https://github.com/Helm-Project/helm-project.git'
 
                     withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID')]) {
-                    withCredentials([string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
-                    // Now you can use the credentials in your AWS CLI commands like:
-                    sh 'aws eks --region ca-central-1 update-kubeconfig --name ed-eks-01'  
+                        withCredentials([string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {
+                            withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
+                            // Now you can use the credentials in your AWS CLI commands like:
+                            sh 'aws eks --region ca-central-1 update-kubeconfig --name ed-eks-01'  
                     
-                
-                    // Deploy with Helm 
-                   sh "sudo -S -u $USERNAME helm upgrade --install myrelease /home/ubuntu/helm-project <PASSWORD>"
+                            withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
+                            // Deploy with Helm 
+                            sh "sudo -S -u $USERNAME helm upgrade --install myrelease /home/ubuntu/helm-project <PASSWORD>"
                             } 
                         }               
                     }
@@ -67,6 +66,6 @@ pipeline{
 post{
     always{
     sh 'docker logout'
-     }
+    }
   }
 }
