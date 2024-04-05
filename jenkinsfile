@@ -44,9 +44,9 @@ pipeline{
             steps {
                 script {
                     // Use credentials for GitHub access
-                    credentialsId 'my-github-credential'
+                    //credentialsId 'my-github-credential'
 
-                    git 'https://github.com/Helm-Project/helm-project.git'
+                   //git 'https://github.com/Helm-Project/helm-project.git'
 
                     
 
