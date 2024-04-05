@@ -54,7 +54,7 @@ pipeline{
                     sh 'aws eks --region ca-central-1 update-kubeconfig  --name ed-eks-01'  
 
                     // Deploy with Helm 
-                    sh "helm upgrade --install myrelease ./helm-project -n ingress-nginx --set image.repository=ajay437/test --set image.tag=${newVersion}"
+                    sh "helm upgrade --install myrelease ./helm-project"
                 }
             }
         }
