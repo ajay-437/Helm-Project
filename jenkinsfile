@@ -5,17 +5,23 @@ pipeline{
     }   
     def newVersion = ""
     stages {
-        stage('Build Docker Image') {
+        stage('Login to Docker Hub') {
             steps {
-                script {
-                    // Login to Docker Hub
+                    
                     sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                  }
+            }
 
-                    // Build the image
+    stage('Build the image') {
+            steps {
+                    
                     sh "docker build -t ajay437/test:latest ."
 
-                    // Get the latest version (optional)
-                    def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
+                  }
+            }
+    stage('Get the latest version') {
+            steps {
+                   def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
 
                     def newVersion = ""
                     if (currentVersion == "" || !currentVersion.contains('.')) {
@@ -31,19 +37,30 @@ pipeline{
                         }
                     }
 
-                    // Tag the image with the new version
+                  }
+            }                
+    stage('Tag the image with the new version') {
+            steps {
                     sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
                     echo "New version tagged: ajay437/test:${newVersion}"
 
-                    // Push the image to Docker Hub
-                    sh "docker push ajay437/test:latest"
+                  }
+            }                
+
+    stage('Push the image to Docker Hub') {
+            steps {
+                     sh "docker push ajay437/test:latest"
                     sh "docker push ajay437/test:${newVersion}"
+
+                  }
+            }                        
+
                 }
             }
         }
-        stage('Deploy with Helm') {
+    stage('Deploy with Helm') {
             steps {
-                script {
+                    {
                     // Use credentials for GitHub access
                     credentialsId 'my-github-credential'
 
