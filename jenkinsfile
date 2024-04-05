@@ -27,9 +27,7 @@ pipeline{
                             def major = versionParts[0].toInteger()
                             def minor = versionParts[1].toInteger()
                             newVersion = "${major}.${minor + 1}"
-                        }
-                    }
-
+                    
                     // Tag the image with the new version
                     sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
                     echo "New version tagged: ajay437/test:${newVersion}"
@@ -37,6 +35,8 @@ pipeline{
                     // Push the image to Docker Hub
                     sh "docker push ajay437/test:latest"
                     sh "docker push ajay437/test:${newVersion}"
+                        }
+                    }
                 }
             }
         }
