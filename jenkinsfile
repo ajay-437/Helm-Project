@@ -17,7 +17,6 @@ pipeline{
                     // Get the latest version (optional)
                     def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
 
-                    def newVersion = ""
                     if (currentVersion == "" || !currentVersion.contains('.')) {
                         newVersion = "0.1"
                     } else {
