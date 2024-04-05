@@ -56,7 +56,7 @@ pipeline{
                     
                 
                     // Deploy with Helm 
-                    sh "helm upgrade --install myrelease ./helm-project"
+                    sh "helm upgrade --install myrelease /home/ubuntu/helm-project"
                          }               
                     }
                 }
