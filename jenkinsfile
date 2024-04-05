@@ -1,3 +1,9 @@
+The error message org.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed: WorkflowScript: 68: expecting '*', found '<EOF>' @ line 68, column 1. 1 error indicates that the Jenkins pipeline script is expecting something at the end of the file but it found the end of the file (EOF) instead.
+
+Looking at your script, it seems like you’re missing a closing brace } at the end of your pipeline script. The pipeline, stages, and stage blocks all start with { but there’s no corresponding } to close the pipeline block.
+
+Here’s the corrected script:
+
 pipeline{
     agent any
     environment{
