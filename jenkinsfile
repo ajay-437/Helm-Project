@@ -59,7 +59,7 @@ pipeline{
             }
     stage('Deploy with Helm') {
             steps {
-                    {
+                script {
                     // Use credentials for GitHub access
                     credentialsId 'my-github-credential'
 
