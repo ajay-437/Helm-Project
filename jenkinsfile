@@ -57,12 +57,11 @@ pipeline{
                 
                     // Deploy with Helm 
                     sh "helm upgrade --install myrelease ./helm-project"
-                     }               
+                         }               
+                    }
                 }
             }
-        }
-    }      
-
+        }      
 post{
     always{
     sh 'docker logout'
