@@ -38,7 +38,7 @@ pipeline{
                     }
 
                   }
-            }                
+                          
     stage('Tag the image with the new version') {
             steps {
                     sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
