@@ -49,7 +49,7 @@ pipeline{
 
                     withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID')]) {
                         withCredentials([string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                            withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
+                           
                             // Now you can use the credentials in your AWS CLI commands like:
                             sh 'aws eks --region ca-central-1 update-kubeconfig --name ed-eks-01'  
                     
