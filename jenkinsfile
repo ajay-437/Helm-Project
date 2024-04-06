@@ -55,7 +55,7 @@ pipeline{
                     
                             //withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
                             // Deploy with Helm 
-                            sh 'sudo helm upgrade --install myrelease ./helm-project'   
+                            sh 'echo $PASSWORD | sudo -S helm upgrade --install myrelease ./helm-project' 
                         }               
                     }
                 }
