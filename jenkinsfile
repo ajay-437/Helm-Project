@@ -55,11 +55,7 @@ pipeline{
                     
                             //withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
                             // Deploy with Helm 
-                            sh """
-                            cd /home/ubuntu/helm-project
-                            helm upgrade --install myrelease .
-                            """
-                            
+                            sh 'sudo helm upgrade --install myrelease ./helm-project'   
                         }               
                     }
                 }
