@@ -27,6 +27,10 @@ pipeline{
                             newVersion = "${major}.${minor + 1}"
                         }
                     }
+                    println("New Version: " + newVersion)
+
+                    // Build the new version
+                    sh "docker build -t ajay437/test:${newVersion} ."
                     // Tag the image with the new version
                     sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
                     echo "New version tagged: ajay437/test:${newVersion}"
