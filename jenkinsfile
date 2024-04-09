@@ -7,14 +7,13 @@ pipeline{
         stage('Build Docker Image') {
             steps {
                 script {
-                    def newVersion = "0.1"
                     // Login to Docker Hub
                     sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
 
                     // Build the image
                     sh "docker build -t ajay437/test:latest ."
-
-                    // Get the latest version (optional)
+        
+                    //( Get the latest version (optional)
                     def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
 
                     if (currentVersion == "" || !currentVersion.contains('.')) {
@@ -26,8 +25,8 @@ pipeline{
                             def minor = versionParts[1].toInteger()
                             newVersion = "${major}.${minor + 1}"
                         }
-                    }
-                    println("New Version: " + newVersion)
+                    })
+                   
 
                     // Build the new version
                     sh "docker build -t ajay437/test:${newVersion} ."
