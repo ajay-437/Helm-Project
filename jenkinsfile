@@ -53,9 +53,8 @@ pipeline{
                             withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
                             // Deploy with Helm 
                             sh """
-                            sudo cp -r /home/ubuntu/helm-project /var/lib/jenkins/workspace/Helm-Pipeline/helm-project
                             cd /var/lib/jenkins/workspace/Helm-Pipeline/helm-project
-                            helm upgrade --install myrelease .
+                            helm upgrade --install myrelease helm-project-3.0.0.tgz
                             """
                              }                       
                         }               
