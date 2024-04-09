@@ -7,7 +7,7 @@ pipeline{
         stage('Build Docker Image') {
             steps {
                 script {
-                     def newVersion = ""
+                     def newVersion = "0.1"
                     // Login to Docker Hub
                     sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
 
@@ -18,8 +18,6 @@ pipeline{
                     def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
 
                     if (currentVersion == "" || !currentVersion.contains('.')) {
-                        newVersion = "0.1"
-                    } else {
                         def versionParts = currentVersion.split('\\.')
                         if (versionParts.length < 2) {
                             println("Invalid version format: " + currentVersion)
@@ -27,7 +25,8 @@ pipeline{
                             def major = versionParts[0].toInteger()
                             def minor = versionParts[1].toInteger()
                             newVersion = "${major}.${minor + 1}"
-                    
+                        }
+                    }
                     // Tag the image with the new version
                     sh "docker tag ajay437/test:latest ajay437/test:${newVersion}"
                     echo "New version tagged: ajay437/test:${newVersion}"
@@ -38,26 +37,28 @@ pipeline{
                         }
                     }
                 }
-            }
-        }
         stage('Deploy with Helm') {
             steps {
                 script {
                     // Use credentials for GitHub access
                     //credentialsId 'my-github-credential'
-
                    //git 'https://github.com/Helm-Project/helm-project.git'
 
                     withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID')]) {
-                    withCredentials([string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                   
-                    // Now you can use the credentials in your AWS CLI commands like:
-                    sh 'aws eks --region ca-central-1 update-kubeconfig --name ed-eks-01'  
+                        withCredentials([string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {
+                           
+                            // Now you can use the credentials in your AWS CLI commands like:
+                            sh 'aws eks --region ca-central-1 update-kubeconfig --name ed-eks-01'  
                     
-                
-                    // Deploy with Helm 
-                    sh "helm upgrade --install myrelease ./helm-project"
-                         }               
+                            withCredentials([usernamePasswordCredentialsId: 'sudo-password', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']){
+                            // Deploy with Helm 
+                            sh """
+                            sudo cp -r /home/ubuntu/helm-project /var/lib/jenkins/workspace/Helm-Pipeline/helm-project
+                            cd /var/lib/jenkins/workspace/Helm-Pipeline/helm-project
+                            helm upgrade --install myrelease .
+                            """
+                             }                       
+                        }               
                     }
                 }
             }
@@ -66,6 +67,6 @@ pipeline{
 post{
     always{
     sh 'docker logout'
-     }
+    }
   }
 }
