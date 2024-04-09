@@ -17,18 +17,19 @@ pipeline{
                     // Get the latest version (optional)
                     def currentVersion = sh(script: 'docker images --format "{{.Tag}}" ajay437/test | grep -E "^[0-9]+\\.[0-9]+$" | sort -r | head -n 1', returnStdout: true).trim()
 
-                    if (currentVersion == "" && currentVersion.contains('.')) {
-                        def versionParts = currentVersion.split('\\.')
-                        if (versionParts.length < 2) {
-                            println("Invalid version format: " + currentVersion)
-                        } else {
-                            def major = versionParts[0].toInteger()
-                            def minor = versionParts[1].toInteger()
-                            newVersion = "${major}.${minor + 1}"
+                    def newVersion
+                    if (currentVersion == "") {
+                        newVersion = "0.1"
+                    } else if (currentVersion.contains('.')) {
+                    def versionParts = currentVersion.split('\\.')
+                    if (versionParts.length < 2) {
+                        println("Invalid version format: " + currentVersion)
+                    } else {
+                        def major = versionParts[0].toInteger()
+                        def minor = versionParts[1].toInteger()
+                        newVersion = "${major}.${minor + 1}"
                         }
                     }
-                   
-
                     // Build the new version
                     sh "docker build -t ajay437/test:${newVersion} ."
                     // Tag the image with the new version
